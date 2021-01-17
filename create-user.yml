@@ -1,0 +1,17 @@
+---
+- name: Create a new user.
+  hosts: all
+  gather_facts: false
+  become: true
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Create new user
+      user:
+        name: "{{ user }}"
+        create_home: yes
+        state: present
+        group: adm
+        shell: /bin/bash
+        password: "{{ default_password | password_hash('sha512', 'A512') }}"

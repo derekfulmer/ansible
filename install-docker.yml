@@ -1,0 +1,45 @@
+---
+- name: Install Docker engine
+  hosts: all
+  gather_facts: false
+  become: true
+
+#  vars_files:
+#    - list_of_packages.yml
+#    - docker_packages.yml
+
+  tasks:
+   - name: Install Docker dependencies
+     apt:
+      # Move this list into an external variable file that is pulled in at playbook runtime.
+      name:
+       - apt-transport-https
+       - curl
+       - ca-certificates
+       - gnupg-agent
+       - software-properties-common
+      state: present
+      update_cache: yes
+
+   - name: Add Docker's GPG key
+     apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+      state: present
+
+   - name: Add Docker's repo to apt sources
+     apt_repository:
+      repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu focal stable
+      state: present
+      update_cache: yes
+
+   - name: Install the Docker engine
+     apt:
+      # Move this list into an external variable file that is pulled in at playbook runtime.
+      name:
+       - docker-ce
+       - docker-ce-cli
+       - containerd.io
+      state: present
+
+## TODO: Turn this into a role and break out dependency installs from the app installs. Add a section to verify docker was installed correctly by running the "hello world" container from the docker docs

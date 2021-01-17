@@ -1,0 +1,1 @@
+Ansible is a well known IT automation tool that can be used to provision new servers or network hosts, template your infrastrucutre, among other tasks. This repo will host playbooks and roles that I have used both in lab and production settings.

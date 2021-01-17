@@ -1,0 +1,16 @@
+---
+- name: Copy user's ssh key to remote host.
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install sshpass 
+      apt:
+        name: sshpass
+        state: present
+
+    - name: Look up and copy a user's SSH key
+      authorized_key:
+        user: "{{ user }}"
+        state: present
+        key: "{{ lookup('file',  }}"

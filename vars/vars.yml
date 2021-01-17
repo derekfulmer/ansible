@@ -1,0 +1,5 @@
+# variables for new user creation playbook
+user: anna
+default_password: P@$$w3rd2009
+
+
