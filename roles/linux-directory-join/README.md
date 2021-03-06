@@ -1,4 +1,4 @@
-# Binding Linux servers to the AD
+# Binding Linux servers to Microsoft Active Directory
 
 ## Summary
 This project utilizes Ansible `group_vars` and roles to assist with running the bind-to-ad.yml. After successfully executing this playbook, you will
