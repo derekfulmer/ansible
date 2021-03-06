@@ -1,6 +1,0 @@
----
-- name: apt-transport-https
-- name: curl
-- name: ca-certificates
-- name: gnupg-agent
-- name: software-properties-common

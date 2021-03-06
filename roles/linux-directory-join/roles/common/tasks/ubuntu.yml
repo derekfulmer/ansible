@@ -1,0 +1,39 @@
+- name: Install required packages
+  apt:
+    pkg:
+    - sssd
+    - libpam-sss
+    - libnss-sss
+    - samba
+    - realmd
+    - krb5-user
+    - ntp
+    - sssd-tools
+    - adcli
+    - packagekit
+    - python3-pexpect
+    state: present
+
+- name: Create the realm file
+  template:
+    src: realmd.conf.ubuntu.j2
+    dest: /etc/realmd.conf
+
+- name: Create the krb5 file
+  template:
+    src: krb5.conf.ubuntu.j2
+    dest: /etc/krb5.conf
+
+- name: Create the sssd file
+  template:
+    src: sssd.conf.ubuntu.j2
+    dest: /etc/sssd/sssd.conf
+    owner: root
+    group: root
+    mode: 0600
+    force: no
+
+- name: Modify PAM to create new user home directory
+  lineinfile:
+    path: /etc/pam.d/common-session
+    line: 'session    required    pam_mkhomedir.so skel=/etc/skel/ umask=0022'

@@ -1,0 +1,18 @@
+[users]
+    default-home = /home/%U
+    default-shell = /bin/bash
+
+[active-directory]
+    default-client = sssd
+    os-name = {{ ansible_distribution }}
+    os-version = {{ ansible_distribution_version }}
+
+[service]
+    automatic-install = no
+
+[domain.com]
+    computer-ou = OU=Unix,OU={{ ou_env_object }},OU=OU,OU=DOMAIN,DC=domain,DC=com
+    fully-qualified-name = no
+    automatic-id-mapping = yes
+    user-principal = no
+    manage-system = no

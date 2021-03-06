@@ -1,0 +1,19 @@
+[sssd]
+domains = DOMAIN.COM
+config_file_version = 2
+services = nss, pam
+default_domain_suffix = domain.com
+full_name_format = %1$s
+
+[domain/DOMAIN.COM]
+id_provider = ad
+ad_domain = domain.com
+krb5_realm = DOMAIN.COM
+realmd_tags = joined-with-adcli
+cache_credentials = True
+krb5_store_password_if_offline = True
+default_shell = /bin/bash
+ldap_id_mapping = True
+use_fully_qualified_names = True
+fallback_homedir = /home/DOMAIN/%u
+access_provider = simple

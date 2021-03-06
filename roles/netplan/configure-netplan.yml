@@ -1,0 +1,18 @@
+#
+# This playbook uses a special variable that will grab the hosts information from the user. If it detects the keyword, 'all' or any
+# group names from the Ansible Inventory i.e. dev_vmware, prod_vmware, then the task will fail.
+#
+- hosts: "{{ ansible_limit }}"
+  become: yes
+  become_method: sudo
+  vars_prompt:
+    - name: "new_static_ip"
+      prompt: "Enter the new static IP address"
+      private: no
+  tasks:
+    - fail: msg="Do not use 'all' or any inventory group names. Please specify the IP Address of a single host."
+      when: ansible_limit == "all" or ansible_limit == "" or ansible_limit == "" or ansible_limit == "" # limit by hosts file groupings.
+
+    - name:
+      include_role:
+        name: common

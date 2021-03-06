@@ -1,0 +1,27 @@
+- name: Copy the template 00-installer-config.yaml over
+  template:
+    src: 00-installer-config.yaml.ubuntu.j2
+    dest: /etc/netplan/00-installer-config.yaml
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+- name: Apply and reload the new static ip address with netplan
+  command: netplan apply
+  become: true
+  async: 100
+  poll: 0
+
+- name: Update Ansible with new ip address information
+  set_fact:
+    ansible_host: "{{new_static_ip}}"
+
+- name: Waiting for the hosts network to come back up
+  local_action:
+    module: wait_for
+    host: "{{ ansible_host }}"
+    port: 22
+    delay: 10
+    state: started
+  register: wait_result

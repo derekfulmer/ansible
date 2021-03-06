@@ -1,0 +1,1 @@
+netplan_gateway_address: # Add gateway IP address of the appropriate subnet.

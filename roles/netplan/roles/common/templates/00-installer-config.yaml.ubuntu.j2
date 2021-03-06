@@ -1,0 +1,13 @@
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    ens160:
+      dhcp4: false
+      addresses:
+        - {{new_static_ip}}/24
+      gateway4: {{ netplan_gateway_address }}
+      nameservers:
+        addresses: [] # Populate this list with the DNS servers necessary. 
+      renderer: networkd
+      dhcp-identifier: mac
+  version: 2

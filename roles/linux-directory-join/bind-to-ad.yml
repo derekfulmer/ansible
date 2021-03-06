@@ -1,0 +1,59 @@
+- hosts: all
+  become: yes
+  become_method: sudo
+  vars_prompt:
+    - name: "bind_password"
+      prompt: "Enter password for blc-hq.com\\sa-join-ad"
+      private: yes
+  tasks:
+    - name: Check if machine is bound to AD
+      shell: /bin/bash -c "realm list | grep kerberos-member"
+      register: realmd_bound
+      changed_when: false # This will never report 'changed' status
+      ignore_errors: true
+
+    # - name: Debug the variable realmd_bound
+    #   debug:
+    #     msg:
+    #       - "{{ realmd_bound }}"
+
+    - name: Check if it can query the AD
+      shell: /bin/bash -c "/usr/bin/id sa-join-ad"
+      register: id_query
+      changed_when: false # This will never report 'changed' status
+      ignore_errors: true
+
+    # - name: Debug the variable id_query
+    #   debug:
+    #     msg:
+    #       - "{{ id_query }}"
+
+    - name: Ansible roles to install the required packages to bind to AD
+      include_role:
+         name: common
+      when: realmd_bound.failed == true
+
+    - name: Run this if it can't query against AD
+      shell: |
+        /bin/bash -c "realm leave"
+        /bin/bash -c "rm -f /var/lib/sss/db/*"
+      when: id_query.failed == true
+
+    - name: Join system to AD
+      expect:
+        command: /bin/bash -c "/usr/sbin/realm join --user=sa-join-ad blc-hq.com"
+        responses:
+          Password for *: "{{ bind_password }}"
+      register: realmd_join_status
+      when: realmd_bound.failed == true or id_query.failed == true
+
+    - name: Permit access to only unixAdmin and unixAccess AD Group
+      command: /bin/bash -c "/usr/sbin/realm permit -g unixAdmin unixAccess"
+      when: realmd_bound.failed == true
+
+    - name: Modify sudoers file to grant unixAdmin root access
+      lineinfile:
+        dest: /etc/sudoers
+        line: '%unixAdmin ALL=(ALL) ALL'
+        insertafter: '^%admin'
+      when: realmd_bound.failed == true
